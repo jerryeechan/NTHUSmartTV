@@ -18,6 +18,19 @@ function gestureListener()
     });
 }
 
+function sendExpression(userID, expr){
+    database.ref('User/'+userID).set({Expression:expr});
+}
+
+function catchExpression(userID){
+    database.ref('User/'+userID).set({Expression:expr});
+}
+
+function HelloWorld(message, id){
+    firebase.database().ref('Hello/'+id).set({Name:message});
+}
+
+
 function processGesture(gesture)
 {
     //adjust volume by the gesture

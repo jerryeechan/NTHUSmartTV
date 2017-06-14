@@ -58,6 +58,13 @@ limitations under the License.
     firebase.initializeApp(config);
     </script>
     
+    <script src="js/client.js"> </script>
+    <script>
+     var starCountRef = firebase.database().ref('posts/' + postId + '/starCount');
+      starCountRef.on('value', function(snapshot) {
+        updateStarCount(postElement, snapshot.val());
+      }); 
+    </script>
     <script type="text/javascript" src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
     <script type="text/javascript">
         //var applicationID = 'chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID';
@@ -211,13 +218,16 @@ limitations under the License.
       function transcribe(words) {
         sendMessage(words);
       }
+
     </script>
   </head>
   <body>
     
         <button type="button" onclick="sendMessage('playVideo')">play</button>
         <button type="button" onclick="sendMessage('pauseVideo')">pause</button>
-
+        <button type="button" onclick="sendExpression('103087087', 'Smile')"> Smiling to me</button>
+        <button type="button" onclick="sendExpression('103087087', 'Angry')"> I'm Angry now </button>
+        <div> <p4> My Expression is :  </p4> </div>
     <!-- Debbugging output -->
     <div style="margin:10px; visibility:hidden;">
       <textarea rows="20" cols="70" id="debugmessage">
