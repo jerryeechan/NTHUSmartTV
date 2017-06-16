@@ -19,7 +19,8 @@ function gestureListener()
 }
 
 function sendExpression(userID, expr){
-    database.ref('User/'+userID).set({Expression:expr});
+    database.ref('User/'+userID+'/ID').set({userID});
+    database.ref('User/'+userID+'/Expression').set({expr});
 }
 
 function catchExpression(userID){
@@ -58,4 +59,5 @@ function processExpression(expression)
     console.log(expression);
     //show icon of expression
 }
+
 
