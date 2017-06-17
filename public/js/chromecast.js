@@ -53,14 +53,14 @@ var castSession;
    * callback on success for stopping app
    */
   function onStopAppSuccess() {
-    appendMessage('onStopAppSuccess');
+    console.log('onStopAppSuccess');
   }
 
   /**
    * session listener during initialization
    */
   function sessionListener(e) {
-    appendMessage('New session ID:' + e.sessionId);
+    console.log('New session ID:' + e.sessionId);
     session = e;
     session.addUpdateListener(sessionUpdateListener);
     session.addMessageListener(namespace, receiverMessage);
@@ -113,20 +113,31 @@ var castSession;
    * @param {string} message A message string
    */
   function sendMessage(message) {
-      console.log(message);
+    commands(message); //charles 0615
+    console.log(message);
+    if(!isController)
+    return;
     if (session != null) {
       session.sendMessage(namespace, message, onSuccess.bind(this, 'Message sent: ' + message),
         onError);
-      commands(message); //charles 0615
     }
     else {
-      commands(message); //charles 0615
+      
+      
+      
       chrome.cast.requestSession(function(e) {
           session = e;
           session.sendMessage(namespace, message, onSuccess.bind(this, 'Message sent: ' +
             message), onError);
         }, onError);
+        //requestSession();
     }
+  }
+  function requestSession()
+  {
+      chrome.cast.requestSession(function(e) {
+        session = e;
+      }, onError);
   }
 
   /**
@@ -153,3 +164,6 @@ var castSession;
   function transcribe(words) {
     sendMessage(words);
   }
+
+  
+;

@@ -1,5 +1,7 @@
 
 var player;
+var isController = false;
+var isReceiver = false;
 var ytBindings;
     window.onload = function() {
     var tag = document.createElement('script');
@@ -15,8 +17,11 @@ var ytBindings;
 
     // handler for the 'ready' event
     castReceiverManager.onReady = function(event) {
-    console.log('Received Ready event: ' + JSON.stringify(event.data));
-    window.castReceiverManager.setApplicationState('Application status is ready...');
+        //TODO:chrome cast checking receiver
+        isReceiver = true;
+        $('#controller-panel').remove();
+        console.log('Received Ready event: ' + JSON.stringify(event.data));
+        window.castReceiverManager.setApplicationState('Application status is ready...');
     };
 
     // handler for 'senderconnected' event
