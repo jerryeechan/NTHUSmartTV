@@ -19,54 +19,56 @@ limitations under the License.
     <title>SMART TV</title>
     <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
     <link rel="stylesheet" type="text/css" href="css/UI.css">
-    <script src="js/youtube.js"></script>
-    <script src="js/chromecast.js"></script>
-    <script src="js/semantic.min.js>"></script>
+     <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/components/icon.min.css'>
+  
     <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
     <script
       src="https://code.jquery.com/jquery-3.1.1.min.js"
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"></script>
+    <script src="js/semantic.min.js"></script>
+    <script src="js/youtube.js"></script>
+    <script src="js/chromecast.js"></script>
+    
     <script>
-    // Initialize Firebase
-    var config = {
-        apiKey: "AIzaSyDUlvlNAiXxQalOc2gi_lLugC1QQ8BX3hc",
-        authDomain: "nthusmarttv-d20c4.firebaseapp.com",
-        databaseURL: "https://nthusmarttv-d20c4.firebaseio.com",
-        projectId: "nthusmarttv-d20c4",
-        storageBucket: "nthusmarttv-d20c4.appspot.com",
-        messagingSenderId: "340586254788"
-    };
-    firebase.initializeApp(config);
+      // Initialize Firebase
+      var config = {
+          apiKey: "AIzaSyDUlvlNAiXxQalOc2gi_lLugC1QQ8BX3hc",
+          authDomain: "nthusmarttv-d20c4.firebaseapp.com",
+          databaseURL: "https://nthusmarttv-d20c4.firebaseio.com",
+          projectId: "nthusmarttv-d20c4",
+          storageBucket: "nthusmarttv-d20c4.appspot.com",
+          messagingSenderId: "340586254788"
+      };
+      firebase.initializeApp(config);
     </script>
     
     <script src="js/client.js"> </script>
 
-
-    <script>
-      //+ '103087087' + '/Expressions'
-     
-    </script>
     <script type="text/javascript" src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
-
 
     <script>
         $(document).ready(function(){
-          $("button").click(function(){   
+          
+          $(".youList").click(function(){   
                 $('.ui.basic.modal')
                   .modal('show')
                 ;
          }); 
+
+         $('.special.cards .image').dimmer({
+            on: 'hover'
+          });
+
         }); 
     </script>
 
 
-  
   </head>
   <body>
     
-        <button class="ui button" onclick="sendMessage('playVideo')">play</button>
-        <button class="ui button"  onclick="sendMessage('pauseVideo')">pause</button>
+        <button class="ui button youList" onclick="sendMessage('playVideo')">play</button>
+        <button class="ui button youList"  onclick="sendMessage('pauseVideo')">pause</button>
         <button class="ui primary button"  onclick="sendExpression('103087087', 'Smile')" > Smiling</button>
         <button class="ui secondary button"  onclick="sendExpression('103087087', 'Angry')" > Angry</button>
     
@@ -74,12 +76,19 @@ limitations under the License.
            <div id="player"></div>
         </div>
 
-        <div class="ui special cards dude six stackable">
+        <div class="ui special cards dude six stackable link">
            
-              <div class="red card">
+              <div class="red card" id="gaze1" >
 
-                  <div class="blurring dimmable image">
-                    <img src="/image/suzy.jpg">
+                   <div class="blurring dimmable image">
+                      <div class="ui inverted dimmer">
+                        <div class="content">
+                          <div class="center">
+                            <div class="ui secondary button">Talk to her</div>
+                          </div>
+                        </div>
+                      </div>
+                      <img src="/image/suzy.jpg">
                   </div>
 
                   <div class="content">
@@ -96,10 +105,17 @@ limitations under the License.
                   </div>
               </div>
 
-              <div class="green card">
+              <div class="red card" id="gaze2">
 
-                  <div class="blurring dimmable image">
-                    <img src="/image/IU.jpg">
+                   <div class="blurring dimmable image">
+                      <div class="ui dimmer">
+                        <div class="content">
+                          <div class="center">
+                            <div class="ui inverted button">Talk to her</div>
+                          </div>
+                        </div>
+                      </div>
+                      <img src="/image/IU.jpg">
                   </div>
 
                   <div class="content">
@@ -118,41 +134,89 @@ limitations under the License.
        </div>
 
 
-
-      <script>
-      
-      var Ref = firebase.database().ref('User/103087087/Expression');
-      var exprValue="777";
-        Ref.on('value', function(snapshot) { 
-        snapshot.forEach(function(child) {
-          console.log(child.key, child.val());
-         exprValue = child.val();
-         document.getElementById('UserID').innerHTML = exprValue;
-         document.getElementById('UserID2').innerHTML = exprValue;
-         });
-       }); 
-      
-      </script>
-
     <div class="ui basic modal">
-      <div class="ui icon header">
-        <i class="archive icon"></i>
-        Archive Old Messages
-      </div>
-      <div class="content">
-        <p>Your inbox is getting full, would you like us to enable automatic archiving of old messages?</p>
-      </div>
-      <div class="actions">
-        <div class="ui red basic cancel inverted button">
-          <i class="remove icon"></i>
-          No
+
+        <div class="ui icon header">
+            <i class="youtube play icon"></i> Youtube List
         </div>
-        <div class="ui green ok inverted button">
-          <i class="checkmark icon"></i>
-          Yes
+
+        <div class="content">
+            <p>Put Youtube List here, deciding which video to watch</p>
         </div>
-      </div>
+
+        <div class="actions">
+
+          <div class="ui red basic cancel inverted button">
+              <i class="remove icon"></i>  No
+          </div>
+
+          <div class="ui green ok inverted button">
+            <i class="checkmark icon"></i>   Yes
+          </div>
+
+        </div>
     </div>
+
+
+    <script>
+      
+      var exprRef = firebase.database().ref('User/103087087/Expression');
+      var idRef = firebase.database().ref('User/103087087/ID');
+      var gazeRef = firebase.database().ref('User/103087087/userGaze');
+
+      var exprValue="777";
+
+        // Input string 'ID', get the reference, then get its value, change its class to green or red 
+        function gazeOn(gazeID){
+          document.getElementById(gazeID).classList.remove('red');
+          document.getElementById(gazeID).classList.add('green');
+        }
+
+        function gazeOff(gazeID){
+          document.getElementById(gazeID).classList.remove('green');
+          document.getElementById(gazeID).classList.add('red');
+        }
+
+        exprRef.on('value', function(snapshot) { 
+          snapshot.forEach(function(child) {
+            console.log(child.key, child.val());
+            exprValue = child.val();
+            
+          if(exprValue=='Smile'){
+              document.getElementById('UserID').innerHTML = '<i class="thumbs up icon"></i> Smile';
+              document.getElementById('UserID2').innerHTML = '<i class="thumbs up icon"></i> Smile';
+              gazeOn('gaze1');
+              gazeOn('gaze2');
+          }
+          if(exprValue=='Angry'){
+              document.getElementById('UserID').innerHTML = '<i class="thumbs down icon"></i> Angry';
+              document.getElementById('UserID2').innerHTML = '<i class="thumbs down icon"></i> Angry';
+              gazeOff('gaze1');
+              gazeOff('gaze2');
+          }
+
+          });
+       }); 
+
+       /*
+        gazeRef.on('value', function(snapshot) { 
+          snapshot.forEach(function(child) {
+            console.log(child.key, child.val());
+            gazeValue = child.val();
+          if(gazeValue=='true'){
+              document.getElementById('gaze').classList.remove('red');
+              document.getElementById('gaze').classList.add('green');
+          }
+          if(gazeValue=='false'){
+              document.getElementById('gaze').classList.remove('green');
+              document.getElementById('gaze').classList.add('red');
+          }
+
+          });
+       }); 
+       */
+      
+    </script>
 
   </body>
 
