@@ -68,7 +68,12 @@ limitations under the License.
 
   </head>
   <body>
-    
+      
+      <div id='controller-panel'>
+        <div class="ui toggle checkbox" id='controller-checkbox'>
+          <input type="checkbox" name="public">
+          <label>Controller Mode</label>
+        </div>
         <button class="ui button youList" onclick="sendMessage('playVideo')">play</button>
         <button class="ui button youList"  onclick="sendMessage('pauseVideo')">pause</button>
         <button class="ui button" onclick="sendMessage('playnext')">next</button>
@@ -76,7 +81,7 @@ limitations under the License.
         <button class="ui button" onclick="sendMessage('volumeUp')">louder</button>
         <button class="ui primary button"  onclick="sendExpression('103087087', 'Smile')" > Smiling</button>
         <button class="ui secondary button"  onclick="sendExpression('103087087', 'Angry')" > Angry</button>
-    
+    </div>
         <div id="wrapper" class="container">
            <div id="player"></div>
         </div>
@@ -164,7 +169,13 @@ limitations under the License.
 
 
     <script>
-      
+      console.log($('#controller-checkbox').checkbox().first());
+      $('#controller-checkbox').checkbox().first().checkbox({
+        onChange: function() {
+          isController = !isController;
+          console.log(isController);
+        }
+      });
       var exprRef = firebase.database().ref('User/103087087/Expression');
       var idRef = firebase.database().ref('User/103087087/ID');
       var gazeRef = firebase.database().ref('User/103087087/userGaze');
