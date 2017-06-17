@@ -18,9 +18,18 @@ function gestureListener()
     });
 }
 
-function sendExpression(userID, expr){
+function sendExpression(userID, expr, gaze){
     database.ref('User/'+userID+'/ID').set({userID});
     database.ref('User/'+userID+'/Expression').set({expr});
+    database.ref('User/'+userID+'/Gaze').set({gaze});
+}
+
+//chatWork
+function sendChat(userID, chat){
+    if(event.keyCode == 13){
+        database.ref('ChatLog/'+userID).push({chat});
+        document.getElementById(userID).value ='';
+    }
 }
 
 function catchExpression(userID){
@@ -56,8 +65,10 @@ function processGesture(gesture)
 
 function processExpression(expression)
 {
-    console.log(expression);
+    //console.log(expression);
     //show icon of expression
 }
+
+
 
 

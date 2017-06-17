@@ -64,6 +64,26 @@ limitations under the License.
 
         }); 
     </script>
+    <style> <!--chatWork-->
+      body {
+        font-family: 'HelveticaNeue-Light';
+      }
+      .msg {
+        margin: 10px 0;
+        padding: 10px;
+        width: 400px;
+        background-color: #efefef;
+      }
+      #username, #text {
+        margin: 5px 0px;
+      }
+      #post {
+        padding: 0.5em 1em;
+        background-color: #50b1ff;
+        border: none;
+        color: #FFF;
+      }
+    </style>
 
 
   </head>
@@ -82,10 +102,11 @@ limitations under the License.
         <button class="ui primary button"  onclick="sendExpression('103087087', 'Smile')" > Smiling</button>
         <button class="ui secondary button"  onclick="sendExpression('103087087', 'Angry')" > Angry</button>
     </div>
+        <div align="right" id="chatResults"></div> <!--chatWork-->
         <div id="wrapper" class="container">
            <div id="player"></div>
         </div>
-
+        
         <div class="ui special cards dude six stackable link">
            
               <div class="red card" id="gaze1" >
@@ -109,9 +130,8 @@ limitations under the License.
                   </div>
 
                   <div class="extra content">
-                      <a>
-                        Say something...
-                      </a>
+                      <input type="text" placeholder="say something" id="103087087" class="search" onkeydown="sendChat('103087087',this.value)"/>
+              
                   </div>
               </div>
 
@@ -136,9 +156,7 @@ limitations under the License.
                   </div>
 
                   <div class="extra content">
-                      <a>
-                        Say something...
-                      </a>
+                      <input type="text" placeholder="say something" id="103123123" class="search" onkeydown="sendChat('103123123',this.value)"/>
                   </div>
               </div>
        </div>
@@ -213,6 +231,46 @@ limitations under the License.
 
           });
        }); 
+
+        //chatWork
+      var startListening = function() {
+          firebase.database().ref('ChatLog/103087087').on('child_added', function(snapshot) {
+          var msg = snapshot.val();
+          console.log("msg:"+msg.chat);
+          var msgUsernameElement = document.createElement("b");
+          msgUsernameElement.textContent = '103087087';
+          
+          var msgTextElement = document.createElement("p");
+          msgTextElement.textContent = msg.chat;
+    
+          var msgElement = document.createElement("div");
+          msgElement.appendChild(msgUsernameElement);
+          msgElement.appendChild(msgTextElement);
+
+          msgElement.className = "msg";
+          document.getElementById("chatResults").appendChild(msgElement);
+        });
+
+          firebase.database().ref('ChatLog/103123123').on('child_added', function(snapshot) {
+          var msg = snapshot.val();
+          console.log("msg:"+msg.chat);
+          var msgUsernameElement = document.createElement("b");
+          msgUsernameElement.textContent = '103123123';
+          
+          var msgTextElement = document.createElement("p");
+          msgTextElement.textContent = msg.chat;
+    
+          var msgElement = document.createElement("div");
+          msgElement.appendChild(msgUsernameElement);
+          msgElement.appendChild(msgTextElement);
+
+          msgElement.className = "msg";
+          document.getElementById("chatResults").appendChild(msgElement);
+        });
+      }
+
+      //chatWork, Begin listening for data
+      startListening();
 
        /*
         gazeRef.on('value', function(snapshot) { 
