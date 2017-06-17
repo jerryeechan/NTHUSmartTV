@@ -1,0 +1,347 @@
+<!--
+Copyright (C) 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello World</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
+    <script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyDUlvlNAiXxQalOc2gi_lLugC1QQ8BX3hc",
+        authDomain: "nthusmarttv-d20c4.firebaseapp.com",
+        databaseURL: "https://nthusmarttv-d20c4.firebaseio.com",
+        projectId: "nthusmarttv-d20c4",
+        storageBucket: "nthusmarttv-d20c4.appspot.com",
+        messagingSenderId: "340586254788"
+    };
+    firebase.initializeApp(config);
+    </script>
+    
+    <script type="text/javascript" src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+    <script type="text/javascript">
+
+      var database = firebase.database();
+
+
+        //var applicationID = 'chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID';
+        
+      var applicationID = '794B7BBF';
+      //var applicationID = 'F83CEF8C';
+      var applicationID = '3BB68922';
+      var namespace = 'urn:x-cast:com.google.cast.sample.helloworld';
+      var session = null;
+
+      //charels 0615
+      var player;
+      var ytBindings;
+      window.onload = function() {
+          var tag = document.createElement('script');
+          tag.src = "https://www.youtube.com/iframe_api";
+            
+          var firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      }
+
+      /**
+       * Call initialization for Cast
+       */
+      if (!chrome.cast || !chrome.cast.isAvailable) {
+        setTimeout(initializeCastApi, 1000);
+      }
+
+      /**
+       * initialization
+       */
+      function initializeCastApi() {
+        var sessionRequest = new chrome.cast.SessionRequest(applicationID);
+        console.log(sessionRequest);
+        var apiConfig = new chrome.cast.ApiConfig(sessionRequest,
+          sessionListener,
+          receiverListener);
+
+        chrome.cast.initialize(apiConfig, onInitSuccess, onError);
+      }
+
+      /**
+       * initialization success callback
+       */
+      function onInitSuccess() {
+        appendMessage('onInitSuccess');
+      }
+
+      /**
+       * initialization error callback
+       */
+      function onError(message) {
+        appendMessage('onError: ' + JSON.stringify(message));
+      }
+
+      /**
+       * generic success callback
+       */
+      function onSuccess(message) {
+        appendMessage('onSuccess: ' + message);
+      }
+
+      /**
+       * callback on success for stopping app
+       */
+      function onStopAppSuccess() {
+        appendMessage('onStopAppSuccess');
+      }
+
+      /**
+       * session listener during initialization
+       */
+      function sessionListener(e) {
+        appendMessage('New session ID:' + e.sessionId);
+        session = e;
+        session.addUpdateListener(sessionUpdateListener);
+        session.addMessageListener(namespace, receiverMessage);
+      }
+
+      /**
+       * listener for session updates
+       */
+      function sessionUpdateListener(isAlive) {
+        var message = isAlive ? 'Session Updated' : 'Session Removed';
+        message += ': ' + session.sessionId;
+        appendMessage(message);
+        if (!isAlive) {
+          session = null;
+        }
+      }
+
+      /**
+       * utility function to log messages from the receiver
+       * @param {string} namespace The namespace of the message
+       * @param {string} message A message string
+       */
+      function receiverMessage(namespace, message) {
+        appendMessage('receiverMessage: ' + namespace + ', ' + message);
+      }
+
+      /**
+       * receiver listener during initialization
+       */
+      function receiverListener(e) {
+          console.log(e);
+        if(e === 'available') {
+          appendMessage('receiver found');
+        }
+        else {
+          appendMessage('receiver list empty');
+        }
+      }
+
+      /**
+       * stop app/session
+       */
+      function stopApp() {
+        session.stop(onStopAppSuccess, onError);
+      }
+
+      /**
+       * send a message to the receiver using the custom namespace
+       * receiver CastMessageBus message handler will be invoked
+       * @param {string} message A message string
+       */
+      function sendMessage(message) {
+          console.log(message);
+        if (session != null) {
+          
+          session.sendMessage(namespace, message, onSuccess.bind(this, 'Message sent: ' + message),onError);
+          commands(message); //charles 0615
+
+        }
+        else {
+          commands(message); //charles 0615
+          chrome.cast.requestSession(function(e) {
+              session = e;
+              session.sendMessage(namespace, message, onSuccess.bind(this, 'Message sent: ' +
+                message), onError);
+            }, onError);
+
+        }
+      }
+
+      /**
+       * append message to debug message window
+       * @param {string} message A message string
+       */
+      function appendMessage(message) {
+        console.log(message);
+        var dw = document.getElementById('debugmessage');
+        dw.innerHTML += '\n' + JSON.stringify(message);
+      }
+
+      /**
+       * utility function to handle text typed in by user in the input field
+       */
+      function update() {
+        sendMessage(document.getElementById('input').value);
+      }
+
+      /**
+       * handler for the transcribed text from the speech input
+       * @param {string} words A transcibed speech string
+       */
+      function transcribe(words) {
+        sendMessage(words);
+      }
+
+      //charles 0615
+      function commands(text)
+        {
+            if(player!=null)
+            {
+                switch(text)
+                {
+                    case 'playVideo':player.playVideo();break;
+                    case 'pauseVideo':player.pauseVideo();break;
+                    case 'stopVideo':player.stopVideo();break;
+                    case "getStatus":player.getPlayerState();break;
+                    case 'volumeUp':var currentVolume = player.getVolume();player.setVolume(currentVolume+5);break;
+                    case 'playnext':player.nextVideo();break;
+                    case 'playprev':player.previousVideo();break;
+                    case 'happy':UserExpression(text);break;
+                    case 'angry':UserExpression(text);break;
+                    case 'notWatching':UserGaze(false);break;
+                    case 'watching':UserGaze(true);break;
+                }
+            }
+        }
+        function displayText(text) {
+            console.log(text);
+            document.getElementById('message').innerText = text;
+            window.castReceiverManager.setApplicationState(text);
+        };
+        
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                    height: '600',
+                    width: '800',
+                    playerVars: { 'autoplay': 0, 'controls': 0 },
+                    events: {
+                            'onReady': onPlayerReady,
+                            'onPlayerStateChange': onStateChange
+                    }
+            });
+            
+            
+        }
+        function playVideo(id)
+        {
+            player.loadVideoById({videoId:id});
+        }
+
+        function onPlayerReady(event) {
+            iframe = document.getElementById("player");
+            iframe.className +='video';
+            player.loadPlaylist(['WlZiT2uAijE','knUxY35zhEc','29nS-YODbvk'],0,0);
+            //document.getElementById('annotation').innerHTML="We're ready to go";
+        }
+
+        function onStateChange(event) {
+                switch (event.data) {
+                        case YT.PlayerState.ENDED:
+                                // TODO let sender know we're done, then close casting 
+                                break;
+                        case YT.PlayerState.PLAYING:
+                                // TODO let sender know we're playing 
+                                break;
+                        case YT.PlayerState.PAUSED:
+                                // TODO let sender know we're paused 
+                                break;
+                }
+        }
+
+        // charles 0615
+        var database = firebase.database();
+
+        function UserExpression(expression) {
+          var exprData = { expr: expression };
+          var userId ;
+          var ref = firebase.database().ref('User/103087087/ID/');
+          ref.once('value').then(function(snapshot)
+            {
+              userId = snapshot.val().userID;
+              var updates = {};
+              updates['User/' + userId + '/Expression'] = exprData;
+              database.ref().update(updates);
+            });
+          
+        }
+
+        function UserGaze(isWatching) {
+          var gazeData = { isWatching: isWatching };
+          var userId ;
+          database.ref('User/103087087/userGaze/').set({
+            isWatching: isWatching
+          });
+          /*
+          var ref = firebase.database().ref('User/103087087/isWatching');
+          ref.once('value').then(function(snapshot)
+            {
+              userId = snapshot.val().userID;
+              var updates = {};
+              updates['User/' + userId + '/isWatching'] = exprData;
+              database.ref().update(updates);
+            });*/
+          
+        }
+
+    </script>
+    <style>
+      body{
+          margin: 0px;
+      }
+          .container {
+          position: relative;
+          width: 100%;
+          height: 0;
+          padding-bottom: 56.25%;
+      }
+      .video {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+  <div id="wrapper" class="container">
+      <div id="player"></div>
+      <div id="message">Talk to me</div>
+  </div>
+  <div id="textDiv" align="right">
+    <button type="button" onclick="sendMessage('playVideo')">play</button>
+    <button type="button" onclick="sendMessage('pauseVideo')">pause</button>
+    <button type="button" onclick="sendMessage('volumeUp')">louder</button>
+    <button type="button" onclick="sendMessage('playnext')">next</button>
+    <button type="button" onclick="sendMessage('playprev')">previous</button>
+    <button type="button" onclick="sendMessage('happy')">happy</button>
+    <button type="button" onclick="sendMessage('angry')">angry</button>
+    <button type="button" onclick="sendMessage('watching')">watching</button>
+    <button type="button" onclick="sendMessage('notWatching')">notWatching</button>
+  </div> 
+  </body>
+  </body>
+</html>

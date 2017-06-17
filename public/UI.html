@@ -27,8 +27,9 @@ limitations under the License.
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"></script>
     <script src="js/semantic.min.js"></script>
-    <script src="js/youtube.js"></script>
     <script src="js/chromecast.js"></script>
+    <script src="js/youtube.js"></script>
+    
     
     <script>
       // Initialize Firebase
@@ -69,6 +70,9 @@ limitations under the License.
     
         <button class="ui button youList" onclick="sendMessage('playVideo')">play</button>
         <button class="ui button youList"  onclick="sendMessage('pauseVideo')">pause</button>
+        <button class="ui button" onclick="sendMessage('playnext')">next</button>
+        <button class="ui button" onclick="sendMessage('playprev')">previous</button>
+        <button class="ui button" onclick="sendMessage('volumeUp')">louder</button>
         <button class="ui primary button"  onclick="sendExpression('103087087', 'Smile')" > Smiling</button>
         <button class="ui secondary button"  onclick="sendExpression('103087087', 'Angry')" > Angry</button>
     

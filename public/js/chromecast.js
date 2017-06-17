@@ -149,8 +149,10 @@ window['__onGCastApiAvailable'] = function(isAvailable) {
     if (session != null) {
       session.sendMessage(namespace, message, onSuccess.bind(this, 'Message sent: ' + message),
         onError);
+      commands(message); //charles 0615
     }
     else {
+      commands(message); //charles 0615
       chrome.cast.requestSession(function(e) {
           session = e;
           session.sendMessage(namespace, message, onSuccess.bind(this, 'Message sent: ' +
