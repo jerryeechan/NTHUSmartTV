@@ -9,6 +9,7 @@ var ytBindings;
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     
     cast.receiver.logger.setLevelValue(0);
+
     window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
     console.log('Starting Receiver Manager');
 
@@ -47,7 +48,7 @@ var ytBindings;
     window.messageBus.onMessage = function(event) {
     console.log('Message [' + event.senderId + ']: ' + event.data);
     // display the message from the sender
-    displayText(event.data);
+    //displayText(event.data);
     commands(event.data);
     // inform all senders on the CastMessageBus of the incoming message event
     // sender message listener will be invoked
@@ -63,6 +64,7 @@ function commands(text)
 {
     if(player!=null)
     {
+        console.log("youtube commands");
         switch(text)
         {
             case 'playVideo':player.playVideo();break;
@@ -77,7 +79,7 @@ function commands(text)
 }
 function displayText(text) {
     console.log(text);
-    document.getElementById('message').innerText = text;
+    //document.getElementById('message').innerText = text;
     window.castReceiverManager.setApplicationState(text);
 };
 
