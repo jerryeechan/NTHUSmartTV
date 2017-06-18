@@ -19,7 +19,7 @@ limitations under the License.
     <title>SMART TV</title>
     <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
     <link rel="stylesheet" type="text/css" href="css/UI.css">
-     <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/components/icon.min.css'>
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/components/icon.min.css'>
   
     <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
     <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
@@ -64,45 +64,28 @@ limitations under the License.
 
         }); 
     </script>
-    <style> <!--chatWork-->
-      body {
-        font-family: 'HelveticaNeue-Light';
-      }
-      .msg {
-        margin: 10px 0;
-        padding: 10px;
-        width: 400px;
-        background-color: #efefef;
-      }
-      #username, #text {
-        margin: 5px 0px;
-      }
-      #post {
-        padding: 0.5em 1em;
-        background-color: #50b1ff;
-        border: none;
-        color: #FFF;
-      }
-    </style>
-
 
   </head>
   <body>
       
-      <div id='controller-panel'>
+     <div id='controller-panel'>
         <div class="ui toggle checkbox" id='controller-checkbox'>
           <input type="checkbox" name="public">
           <label>Controller Mode</label>
         </div>
-        <button class="ui button youList" onclick="sendMessage('playVideo')">play</button>
-        <button class="ui button youList"  onclick="sendMessage('pauseVideo')">pause</button>
-        <button class="ui button" onclick="sendMessage('playnext')">next</button>
-        <button class="ui button" onclick="sendMessage('playprev')">previous</button>
-        <button class="ui button" onclick="sendMessage('volumeUp')">louder</button>
-        <button class="ui primary button"  onclick="sendExpression('103087087', 'Smile')" > Smiling</button>
-        <button class="ui secondary button"  onclick="sendExpression('103087087', 'Angry')" > Angry</button>
+        <button class="ui labeled icon button teal basic" onclick="sendMessage('playVideo')"><i class="play icon"></i>play</button>
+        <button class="ui labeled icon button negative basic" onclick="sendMessage('pauseVideo')"> <i class="pause icon"></i>pause</button>
+       
+        <button class="ui right labeled icon button secondary basic" onclick="sendMessage('playnext')"><i class="right arrow icon"></i>next</button>
+        <button class="ui left labeled icon button secondary basic" onclick="sendMessage('playprev')"><i class="left arrow icon"></i>previous</button>
+       
+        <button class="ui labeled icon button brown basic" onclick="sendMessage('volumeUp')"><i class="sound icon"></i>louder</button>
+        <button class="ui primary button basic"  onclick="sendExpression('103087087', 'Smile')" > Smiling</button>
+        <button class="ui secondary button basic"  onclick="sendExpression('103087087', 'Angry')" > Angry</button>
     </div>
-        <div align="right" id="chatResults"></div> <!--chatWork-->
+    
+        <div align="right" class="transparent messages" id="chatResults"></div> <!--chatWork-->
+       
         <div id="wrapper" class="container">
            <div id="player"></div>
         </div>
@@ -129,9 +112,9 @@ limitations under the License.
                         </div>
                   </div>
 
-                  <div class="extra content">
-                      <input type="text" placeholder="say something" id="103087087" class="search" onkeydown="sendChat('103087087',this.value)"/>
-              
+                  <div class="extra content ui input">
+                      <input type="text" placeholder="Say something..." id="103087087"  onkeydown="sendChat('103087087',this.value)"/>
+                  
                   </div>
               </div>
 
@@ -155,8 +138,9 @@ limitations under the License.
                         </div>
                   </div>
 
-                  <div class="extra content">
-                      <input type="text" placeholder="say something" id="103123123" class="search" onkeydown="sendChat('103123123',this.value)"/>
+                  <div class="extra content ui input">
+          
+                      <input type="text" placeholder="Say something..." id="103123123" onkeydown="sendChat('103123123',this.value)"/>
                   </div>
               </div>
        </div>
@@ -187,13 +171,14 @@ limitations under the License.
 
 
     <script>
-      console.log($('#controller-checkbox').checkbox().first());
+
       $('#controller-checkbox').checkbox().first().checkbox({
         onChange: function() {
-          isController = !isController;
-          console.log(isController);
+        isController = !isController;
+        console.log(isController);
         }
       });
+
       var exprRef = firebase.database().ref('User/103087087/Expression');
       var idRef = firebase.database().ref('User/103087087/ID');
       var gazeRef = firebase.database().ref('User/103087087/userGaze');
@@ -210,17 +195,18 @@ limitations under the License.
           document.getElementById(gazeID).classList.remove('green');
           document.getElementById(gazeID).classList.add('red');
         }
-
+        // GET Expression
         exprRef.on('value', function(snapshot) { 
           snapshot.forEach(function(child) {
-            console.log(child.key, child.val());
-            exprValue = child.val();
+          console.log(child.key, child.val());
+          exprValue = child.val();
             
           if(exprValue=='Smile'){
               document.getElementById('UserID').innerHTML = '<i class="thumbs up icon"></i> Smile';
               document.getElementById('UserID2').innerHTML = '<i class="thumbs up icon"></i> Smile';
               gazeOn('gaze1');
               gazeOn('gaze2');
+        
           }
           if(exprValue=='Angry'){
               document.getElementById('UserID').innerHTML = '<i class="thumbs down icon"></i> Angry';
@@ -231,46 +217,54 @@ limitations under the License.
 
           });
        }); 
+  
+      var messages = $(".messages");
 
-        //chatWork
+      //chatWork
       var startListening = function() {
-          firebase.database().ref('ChatLog/103087087').on('child_added', function(snapshot) {
-          var msg = snapshot.val();
-          console.log("msg:"+msg.chat);
-          var msgUsernameElement = document.createElement("b");
-          msgUsernameElement.textContent = '103087087';
           
-          var msgTextElement = document.createElement("p");
-          msgTextElement.textContent = msg.chat;
-    
-          var msgElement = document.createElement("div");
-          msgElement.appendChild(msgUsernameElement);
-          msgElement.appendChild(msgTextElement);
+            firebase.database().ref('ChatLog/103087087').on('child_added', function(snapshot) {
+            var msg = snapshot.val();
+            console.log("msg:"+msg.chat);
 
-          msgElement.className = "msg";
-          document.getElementById("chatResults").appendChild(msgElement);
-        });
+            var msgUsernameElement = document.createElement("b");
+            msgUsernameElement.textContent = '103087087';
+            
+            var msgTextElement = document.createElement("p");
+            msgTextElement.textContent = msg.chat;
+            
+            var msgElement = document.createElement("div");
+            msgElement.appendChild(msgUsernameElement);
+            msgElement.appendChild(msgTextElement);
 
-          firebase.database().ref('ChatLog/103123123').on('child_added', function(snapshot) {
-          var msg = snapshot.val();
-          console.log("msg:"+msg.chat);
-          var msgUsernameElement = document.createElement("b");
-          msgUsernameElement.textContent = '103123123';
+            msgElement.className = "msg";
+            document.getElementById("chatResults").appendChild(msgElement);
+            messages.scrollTop(messages.prop('scrollHeight'));
+          });
+
+            firebase.database().ref('ChatLog/103123123').on('child_added', function(snapshot) {
+            var msg = snapshot.val();
+            console.log("msg:"+msg.chat);
+            var msgUsernameElement = document.createElement("b");
+            msgUsernameElement.textContent = 'IU';
+            
+            var msgTextElement = document.createElement("p");
+            msgTextElement.textContent = msg.chat;
+      
+            var msgElement = document.createElement("div");
+            msgElement.appendChild(msgUsernameElement);
+            msgElement.appendChild(msgTextElement);
+
+            msgElement.className = "msg";
+            document.getElementById("chatResults").appendChild(msgElement);
+            messages.scrollTop(messages.prop('scrollHeight'));
+          });
           
-          var msgTextElement = document.createElement("p");
-          msgTextElement.textContent = msg.chat;
-    
-          var msgElement = document.createElement("div");
-          msgElement.appendChild(msgUsernameElement);
-          msgElement.appendChild(msgTextElement);
 
-          msgElement.className = "msg";
-          document.getElementById("chatResults").appendChild(msgElement);
-        });
       }
-
+      
       //chatWork, Begin listening for data
-      startListening();
+     // startListening();
 
        /*
         gazeRef.on('value', function(snapshot) { 
