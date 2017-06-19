@@ -33,6 +33,7 @@ body{
 
 body {
     font-family: 'HelveticaNeue-Light';
+     background-color: black;
 }
 .msg {
     margin: 10px 0;
@@ -55,6 +56,13 @@ body {
 #controller-panel{
     position : absolute;
     bottom: 0;
-    right: 0;
+    right: 20px;
     z-index: 1;
+}
+
+.whiteWords{
+
+    background-color: #50b1ff;
+    border: none;
+    color: #FFF;
 }
