@@ -79,7 +79,7 @@ limitations under the License.
               <i class="thumbs outline up icon"></i>     
 
             <div class="menu">
-              <div class="item" onclick="sendExpression('103087087', 'Angry')">
+              <div class="item" onclick="sendExpression('103087087', 'Anger')">
                  <i class="em em-angry"></i>
                 Anger
               </div>
@@ -176,7 +176,11 @@ limitations under the License.
                   </div>
 
                   <div class="content">
-                        <a class="header" >Suzy</a>
+                    <!--gazeWork-->
+                      <div onclick="sendGaze('103087087',true)"><i id="103087087_g1" class="em em-red_circle"></i></div>
+                      <a class="header" >Suzy</a>
+  
+                        
                         <div class="meta">
                           <span class="date" id="UserID">Expression</span>
                         </div>
@@ -185,10 +189,7 @@ limitations under the License.
                   <div class="extra content ui input">
                       <input type="text" placeholder="Say something..." id="103087087" style="visibility: hidden" onkeydown="sendChat('103087087',this.value)"/>
                   </div>
-                  <div class="setGaze area" ><!--gazeWork-->
-                    <div id="103087087_g1" align="center" style="visibility: hidden" onclick="sendGaze('103087087',true)"><strong><font color=#99ff66 face="verdana">Watching</font></strong></div>
-                    <div id="103087087_g2" align="center" style="visibility: hidden" onclick="sendGaze('103087087',false)"><strong><font color=#ff3333 face="verdana">notWatching</font></strong></div>
-                  </div>
+             
               </div>
 
               <div class="red card" id="gaze2">
@@ -205,6 +206,9 @@ limitations under the License.
                   </div>
 
                   <div class="content">
+                        <!--gazeWork-->
+                        <div onclick="sendGaze('103087087',false)"><i id="103123123_g1" class="em em-red_circle"></i></div>
+                           
                         <a class="header" >IU</a>
                         <div class="meta">
                           <span class="date" id="UserID2">Expression</span>
@@ -214,10 +218,10 @@ limitations under the License.
                   <div class="extra content ui input">
                       <input type="text" placeholder="Say something..." id="103123123" onkeydown="sendChat('103123123',this.value)"/>
                   </div>
-                  <div class="setGaze area" ><!--gazeWork-->
-                    <div id="103123123_g1" align="center" onclick="sendGaze('103087087',true)"><strong><font color=#99ff66 face="verdana">Watching</font></strong></div>
-                    <div id="103123123_g2" align="center" onclick="sendGaze('103087087',false)"><strong><font color=#ff3333 face="verdana">notWatching</font></strong></div>
-                  </div>
+
+                  
+               
+
                   <!--
                   <div class="ui animated inverted button blue" tabindex="0" >
                     <div class="visible content">Watching</div>
@@ -263,18 +267,18 @@ limitations under the License.
         if(isController == true){
           document.getElementById('103123123').style.visibility = 'hidden';
           document.getElementById('103087087').style.visibility = 'visible';
-          document.getElementById('103123123_g1').style.visibility = 'hidden';
+         /* document.getElementById('103123123_g1').style.visibility = 'hidden';
           document.getElementById('103087087_g1').style.visibility = 'visible';
           document.getElementById('103123123_g2').style.visibility = 'hidden';
-          document.getElementById('103087087_g2').style.visibility = 'visible';
+          document.getElementById('103087087_g2').style.visibility = 'visible';*/
           modeRef.set({userMode: 'controller'});
         }else{
           document.getElementById('103123123').style.visibility = 'visible';
           document.getElementById('103087087').style.visibility = 'hidden';
-          document.getElementById('103123123_g1').style.visibility = 'visible';
+          /*document.getElementById('103123123_g1').style.visibility = 'visible';
           document.getElementById('103087087_g1').style.visibility = 'hidden';
           document.getElementById('103123123_g2').style.visibility = 'visible';
-          document.getElementById('103087087_g2').style.visibility = 'hidden';
+          document.getElementById('103087087_g2').style.visibility = 'hidden';*/
           modeRef.set({userMode: 'user'});
         }
         }
@@ -284,19 +288,36 @@ limitations under the License.
       var idRef = firebase.database().ref('User/103087087/ID');
       var gazeRef = firebase.database().ref('User/103087087/Gaze');
 
+      var gesRef = firebase.database().ref('User/103087087/Gesture');
+
       var exprValue="777";
       var modeValue="123";
 
         // Input string 'ID', get the reference, then get its value, change its class to green or red 
         function gazeOn(gazeID){
-          document.getElementById(gazeID).classList.remove('red');
-          document.getElementById(gazeID).classList.add('green');
+         document.getElementById(gazeID).classList.remove("em-red_circle");
+         document.getElementById(gazeID).classList.add("em-tennis");
+        //document.getElementById(gazeID).innerHTML='<i class="em em-tennis"></i>';
         }
 
         function gazeOff(gazeID){
-          document.getElementById(gazeID).classList.remove('green');
-          document.getElementById(gazeID).classList.add('red');
+          document.getElementById(gazeID).classList.remove("em-tennis");
+          document.getElementById(gazeID).classList.add("em-red_circle");
+        // document.getElementById(gazeID).innerHTML='<i class="em em-red_circle"></i>';
         }
+
+        //GET valumn
+        gesRef.on('value', function(snapshot) { 
+          snapshot.forEach(function(child) {
+          console.log(child.key, child.val());
+          gesValue = child.val();
+          if(gesValue=='up') 
+              sendMessage('volumeUp');
+          if(gesValue=='down')
+              sendMessage('volumeDown');
+          });
+        });
+
 
         //GET mode
         modeRef.on('value', function(snapshot) { 
@@ -312,20 +333,26 @@ limitations under the License.
           console.log(child.key, child.val());
           gazeValue = child.val();
 
-          console.log('modeValue: '+modeValue);
+          console.log('gazeValue: '+gazeValue);
+
           if(modeValue=='controller'){
             if(gazeValue==true){
-              gazeOn('gaze1');
+              gazeOn('103087087_g1');
+              console.log('FUCCKKKKKKKKKKK');
+            //  gazeOn('gaze1');
             }
             if(gazeValue==false){
-                gazeOff('gaze1');
+                gazeOff('103087087_g1');
+           //     gazeOff('gaze1');
             }
           }else{
             if(gazeValue==true){
-              gazeOn('gaze2');
+              gazeOn('103123123_g1');
+            //  gazeOn('gaze2');
             }
             if(gazeValue==false){
-                gazeOff('gaze2');
+                gazeOff('103123123_g1');
+            //    gazeOff('gaze2');
             }
           }
           
@@ -341,7 +368,7 @@ limitations under the License.
           exprValue = child.val();
 
             
-          if(exprValue=='Angry'){
+          if(exprValue=='Anger'){
             
             if(modeValue=='controller'){
               document.getElementById('UserID').innerHTML = '<i class="em em-angry"></i> Anger';
