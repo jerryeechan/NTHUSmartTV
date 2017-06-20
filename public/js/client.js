@@ -18,9 +18,14 @@ function gestureListener()
     });
 }
 
-function sendExpression(userID, expr, gaze){
+function sendExpression(userID, expr){
     database.ref('User/'+userID+'/ID').set({userID});
     database.ref('User/'+userID+'/Expression').set({expr});
+    //database.ref('User/'+userID+'/Gaze').set({gaze});
+}
+
+//gazeWork
+function sendGaze(userID, gaze){
     database.ref('User/'+userID+'/Gaze').set({gaze});
 }
 

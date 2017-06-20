@@ -76,7 +76,7 @@ function commands(text)
             case 'pauseVideo':player.pauseVideo();break;
             case 'stopVideo':player.stopVideo();break;
             case "getStatus":player.getPlayerState();break;
-            case 'volumeUp':var currentVolume = player.getVolume();player.setVolume(currentVolume+5);break;
+            case 'volumeUp':var currentVolume = player.getVolume();player.setVolume(currentVolume+15);break;
             case 'playnext':player.nextVideo();break;
             case 'playprev':player.previousVideo();break;
         }
@@ -93,7 +93,7 @@ function onYouTubeIframeAPIReady() {
             height: '600',
             width: '800',
             videoId: 'knUxY35zhEc',
-            playerVars: { 'autoplay': 0, 'controls': 1 },
+            playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1,'loop': 1,'rel':0,'showinfo':0 },
             events: {
                     'onReady': onPlayerReady,
                     'onPlayerStateChange': onStateChange
@@ -110,7 +110,8 @@ function playVideo(id)
 function onPlayerReady(event) {
     iframe = document.getElementById("player");
     iframe.className +='video';
-    player.loadPlaylist(['WlZiT2uAijE','knUxY35zhEc','29nS-YODbvk'],0,0);
+    player.loadPlaylist(['qjHlgrGsLWQ','knUxY35zhEc','QK8mJJJvaes'],0,0);
+    player.setVolume(20);
     //document.getElementById('annotation').innerHTML="We're ready to go";
 }
 

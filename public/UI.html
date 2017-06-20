@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <!DOCTYPE html>
-<html>
+<html> 
   <head>
     <title>SMART TV</title>
     <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
@@ -183,8 +183,11 @@ limitations under the License.
                   </div>
 
                   <div class="extra content ui input">
-                      <input type="text" placeholder="Say something..." id="103087087"  onkeydown="sendChat('103087087',this.value)"/>
-                  
+                      <input type="text" placeholder="Say something..." id="103087087" style="visibility: hidden" onkeydown="sendChat('103087087',this.value)"/>
+                  </div>
+                  <div class="setGaze area" ><!--gazeWork-->
+                    <div id="103087087_g1" align="center" style="visibility: hidden" onclick="sendGaze('103087087',true)"><strong><font color=#99ff66 face="verdana">Watching</font></strong></div>
+                    <div id="103087087_g2" align="center" style="visibility: hidden" onclick="sendGaze('103087087',false)"><strong><font color=#ff3333 face="verdana">notWatching</font></strong></div>
                   </div>
               </div>
 
@@ -209,9 +212,19 @@ limitations under the License.
                   </div>
 
                   <div class="extra content ui input">
-          
                       <input type="text" placeholder="Say something..." id="103123123" onkeydown="sendChat('103123123',this.value)"/>
                   </div>
+                  <div class="setGaze area" ><!--gazeWork-->
+                    <div id="103123123_g1" align="center" onclick="sendGaze('103087087',true)"><strong><font color=#99ff66 face="verdana">Watching</font></strong></div>
+                    <div id="103123123_g2" align="center" onclick="sendGaze('103087087',false)"><strong><font color=#ff3333 face="verdana">notWatching</font></strong></div>
+                  </div>
+                  <!--
+                  <div class="ui animated inverted button blue" tabindex="0" >
+                    <div class="visible content">Watching</div>
+                  </div>
+                  <div class="ui animated inverted button brown" tabindex="0" >
+                    <div class="visible content">notWatching</div>
+                  </div>-->
               </div>
        </div>
 
@@ -241,19 +254,38 @@ limitations under the License.
 
 
     <script>
+      var modeRef = firebase.database().ref('Mode');
 
       $('#controller-checkbox').checkbox().first().checkbox({
         onChange: function() {
         isController = !isController;
         console.log(isController);
+        if(isController == true){
+          document.getElementById('103123123').style.visibility = 'hidden';
+          document.getElementById('103087087').style.visibility = 'visible';
+          document.getElementById('103123123_g1').style.visibility = 'hidden';
+          document.getElementById('103087087_g1').style.visibility = 'visible';
+          document.getElementById('103123123_g2').style.visibility = 'hidden';
+          document.getElementById('103087087_g2').style.visibility = 'visible';
+          modeRef.set({userMode: 'controller'});
+        }else{
+          document.getElementById('103123123').style.visibility = 'visible';
+          document.getElementById('103087087').style.visibility = 'hidden';
+          document.getElementById('103123123_g1').style.visibility = 'visible';
+          document.getElementById('103087087_g1').style.visibility = 'hidden';
+          document.getElementById('103123123_g2').style.visibility = 'visible';
+          document.getElementById('103087087_g2').style.visibility = 'hidden';
+          modeRef.set({userMode: 'user'});
+        }
         }
       });
 
       var exprRef = firebase.database().ref('User/103087087/Expression');
       var idRef = firebase.database().ref('User/103087087/ID');
-      var gazeRef = firebase.database().ref('User/103087087/userGaze');
+      var gazeRef = firebase.database().ref('User/103087087/Gaze');
 
       var exprValue="777";
+      var modeValue="123";
 
         // Input string 'ID', get the reference, then get its value, change its class to green or red 
         function gazeOn(gazeID){
@@ -265,63 +297,103 @@ limitations under the License.
           document.getElementById(gazeID).classList.remove('green');
           document.getElementById(gazeID).classList.add('red');
         }
+
+        //GET mode
+        modeRef.on('value', function(snapshot) { 
+          snapshot.forEach(function(child) {
+                modeValue = child.val();
+                
+          });
+        });
+
+        //GET Gaze
+        gazeRef.on('value', function(snapshot) { 
+          snapshot.forEach(function(child) {
+          console.log(child.key, child.val());
+          gazeValue = child.val();
+
+          console.log('modeValue: '+modeValue);
+          if(modeValue=='controller'){
+            if(gazeValue==true){
+              gazeOn('gaze1');
+            }
+            if(gazeValue==false){
+                gazeOff('gaze1');
+            }
+          }else{
+            if(gazeValue==true){
+              gazeOn('gaze2');
+            }
+            if(gazeValue==false){
+                gazeOff('gaze2');
+            }
+          }
+          
+
+          });
+        });
+
         // GET Expression
         exprRef.on('value', function(snapshot) { 
           snapshot.forEach(function(child) {
           console.log(child.key, child.val());
+
           exprValue = child.val();
+
             
-          if(exprValue=='Anger'){
+          if(exprValue=='Angry'){
+            
+            if(modeValue=='controller'){
               document.getElementById('UserID').innerHTML = '<i class="em em-angry"></i> Anger';
+            }else{
               document.getElementById('UserID2').innerHTML = '<i class="em em-angry"></i> Anger';
-              gazeOn('gaze1');
-              gazeOn('gaze2');
-        
+            }
+              
           }
           if(exprValue=='Happiness'){
+            if(modeValue=='controller')
               document.getElementById('UserID').innerHTML = ' <i class="em em-blush"></i> Happiness';
+            else
               document.getElementById('UserID2').innerHTML = ' <i class="em em-blush"></i> Happiness';
-              gazeOff('gaze1');
-              gazeOff('gaze2');
           }
 
           if(exprValue=='Disgust'){
+            if(modeValue=='controller')
               document.getElementById('UserID').innerHTML = ' <i class="em em-poop"></i> Disgust';
+            else
               document.getElementById('UserID2').innerHTML = ' <i class="em em-poop"></i> Disgust';
-              gazeOff('gaze1');
-              gazeOff('gaze2');
           }
 
           if(exprValue=='Fear'){
+            if(modeValue=='controller')
               document.getElementById('UserID').innerHTML = ' <i class="em em-confounded"></i> Fear';
+            else
               document.getElementById('UserID2').innerHTML = ' <i class="em em-confounded"></i> Fear';
-              gazeOff('gaze1');
-              gazeOff('gaze2');
           }
 
           if(exprValue=='Sadness'){
+            if(modeValue=='controller')
               document.getElementById('UserID').innerHTML = '<i class="em em-cry"></i> Sadness';
+            else
               document.getElementById('UserID2').innerHTML = '<i class="em em-cry"></i> Sadness';
-              gazeOff('gaze1');
-              gazeOff('gaze2');
           }
 
           if(exprValue=='Surprise'){
+            if(modeValue=='controller')
               document.getElementById('UserID').innerHTML = '<i class="em em-open_mouth"></i> Surprise';
+            else
               document.getElementById('UserID2').innerHTML = '<i class="em em-open_mouth"></i> Surprise';
-              gazeOff('gaze1');
-              gazeOff('gaze2');
           }
 
           if(exprValue=='Neutral'){
+            if(modeValue=='controller')
               document.getElementById('UserID').innerHTML = '<i class="em em-neutral_face"></i> Neutral';
+            else
               document.getElementById('UserID2').innerHTML = '<i class="em em-neutral_face"></i> Neutral';
-              gazeOff('gaze1');
-              gazeOff('gaze2');
           }
 
           });
-       }); 
+       });
   
       var messages = $(".messages");
 
@@ -333,7 +405,7 @@ limitations under the License.
             console.log("msg:"+msg.chat);
 
             var msgUsernameElement = document.createElement("b");
-            msgUsernameElement.textContent = '103087087';
+            msgUsernameElement.textContent = 'Suzy';
             
             var msgTextElement = document.createElement("p");
             msgTextElement.textContent = msg.chat;
@@ -369,7 +441,7 @@ limitations under the License.
       }
       
       //chatWork, Begin listening for data
-     // startListening();
+      startListening();
 
        /*
         gazeRef.on('value', function(snapshot) { 
